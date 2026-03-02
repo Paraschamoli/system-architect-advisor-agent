@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "recreate_keys": false,
   "skills": [
-    "skills/System-Architect-Advisor"
+    "skills/system_architect_advisor_agent"
   ],
   "capabilities": {},
   "agent_trust": "low",

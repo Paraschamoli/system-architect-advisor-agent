@@ -3,11 +3,12 @@
 import argparse
 import asyncio
 import json
+import logging
 import os
 import re
 import traceback
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from agno.agent import Agent
 from agno.models.openrouter import OpenRouter
@@ -15,6 +16,9 @@ from agno.tools.mem0 import Mem0Tools
 from bindu.penguin.bindufy import bindufy
 from dotenv import load_dotenv
 from openai import OpenAI
+
+# Set up logging
+_logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -43,44 +47,25 @@ _initialized = False
 _init_lock = asyncio.Lock()
 
 
-def load_config() -> dict:
-    """Load agent configuration from project root."""
-    # Try multiple possible locations for agent_config.json
-    possible_paths = [
-        Path(__file__).parent.parent / "agent_config.json",  # Project root
-        Path(__file__).parent / "agent_config.json",  # Same directory as main.py
-        Path.cwd() / "agent_config.json",  # Current working directory
-    ]
+def load_config() -> dict[str, Any]:
+    """Load agent config from `agent_config.json` or return defaults."""
+    config_path = Path(__file__).parent / "agent_config.json"
 
-    for config_path in possible_paths:
-        if config_path.exists():
-            try:
-                with open(config_path) as f:
-                    return json.load(f)
-            except (PermissionError, json.JSONDecodeError) as e:
-                print(f"⚠️  Error reading {config_path}: {type(e).__name__}")
-                continue
-            except Exception as e:
-                print(f"⚠️  Unexpected error reading {config_path}: {type(e).__name__}")
-                continue
+    if config_path.exists():
+        try:
+            with open(config_path) as f:
+                return cast(dict[str, Any], json.load(f))
+        except (OSError, json.JSONDecodeError) as exc:
+            _logger.warning("Failed to load config from %s", config_path, exc_info=exc)
 
-    # If no config found or readable, create a minimal default
-    print("⚠️  No agent_config.json found, using default configuration")
     return {
-        "name": "System-Architect-Advisor-Agent",
+        "name": "system-architect-advisor-agent",
         "description": "AI System Architect Advisor for technical design",
-        "version": "1.0.0",
         "deployment": {
             "url": "http://127.0.0.1:3773",
             "expose": True,
             "protocol_version": "1.0.0",
-            "proxy_urls": ["127.0.0.1"],
-            "cors_origins": ["*"],
         },
-        "environment_variables": [
-            {"key": "OPENROUTER_API_KEY", "description": "OpenRouter API key for LLM calls", "required": True},
-            {"key": "MEM0_API_KEY", "description": "Mem0 API key for memory operations", "required": False},
-        ],
     }
 
 
