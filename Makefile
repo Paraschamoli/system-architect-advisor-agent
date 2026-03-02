@@ -198,8 +198,8 @@ clean-build: ## Clean build artifacts
 .PHONY: docker-push
 docker-push: ## Push Docker image to Docker Hub
 	@echo "🚀 Pushing Docker image to Docker Hub..."
-	@docker tag system_architect_advisor_agent:latest para5/system_architect_advisor_agent:latest
-	@docker push para5/system_architect_advisor_agent:latest
+	@docker tag system_architect_advisor_agent:latest para5/system-architect-advisor-agent:latest
+	@docker push para5/system-architect-advisor-agent:latest
 	@echo "✅ Image pushed to Docker Hub"
 
 .PHONY: docker-build-push

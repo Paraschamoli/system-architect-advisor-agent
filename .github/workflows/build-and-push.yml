@@ -46,12 +46,12 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            para5/System-Architect-Advisor-Agent:latest
-            para5/System-Architect-Advisor-Agent:${{ steps.version.outputs.version }}
-            para5/System-Architect-Advisor-Agent:build-${{ github.run_number }}
-            para5/System-Architect-Advisor-Agent:${{ github.sha }}
-          cache-from: type=registry,ref=para5/System-Architect-Advisor-Agent:buildcache
-          cache-to: type=registry,ref=para5/System-Architect-Advisor-Agent:buildcache,mode=max
+            para5/system-architect-advisor-agent:latest
+            para5/system-architect-advisor-agent:${{ steps.version.outputs.version }}
+            para5/system-architect-advisor-agent:build-${{ github.run_number }}
+            para5/system-architect-advisor-agent:${{ github.sha }}
+          cache-from: type=registry,ref=para5/system-architect-advisor-agent:buildcache
+          cache-to: type=registry,ref=para5/system-architect-advisor-agent:buildcache,mode=max
 
       - name: Read agent config
         id: agent_config
@@ -97,7 +97,7 @@ jobs:
               "deployment": {
                 "url": "${{ fromJson(steps.agent_config.outputs.config).deployment.url }}",
                 "protocol_version": "${{ fromJson(steps.agent_config.outputs.config).deployment.protocol_version }}",
-                "docker_image": "para5/System-Architect-Advisor-Agent:latest",
+                "docker_image": "para5/system-architect-advisor-agent:latest",
                 "docker_digest": "${{ steps.docker_build.outputs.digest }}",
                 "platforms": ["linux/amd64", "linux/arm64"]
               },
